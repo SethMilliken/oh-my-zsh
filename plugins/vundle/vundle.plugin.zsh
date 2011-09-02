@@ -13,11 +13,11 @@ function vundle-init () {
 
 function vundle () {
   vundle-init
-  vim -c "execute \"BundleInstall\" | q"
+  vim -c "execute \"BundleInstall\" | q | q"
 }
 
 
 function vundle-update () {
   vundle-init
-  vim -c "execute \"BundleInstall!\" | q"
+  vim -c "execute \"BundleInstall!\" | q | q"
 }
