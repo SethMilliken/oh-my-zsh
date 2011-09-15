@@ -376,7 +376,7 @@ function vcs_behind_by() {
   echo $result
 }
 
-function _vcs_behind_by_git() { git status --porcelain --branch --short | awk -F'[' '/behind/{sub(/.*behind /,"",$2);sub(/]/,"",$2)};END{print $2}'; }
+function _vcs_behind_by_git() { git status --porcelain --branch --short | awk -F'[' '/behind/{sub(/.*behind /,"",$2);sub(/]/,"",$2);print $2}'; }
 
 function _vcs_behind_by_svn() { return } # FIXME: unimplemented
 
