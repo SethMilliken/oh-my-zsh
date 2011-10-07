@@ -167,11 +167,12 @@ function user_host_info() {
 }
 
 function jobs_info() {
-  local result=''
-  result+="$SHELL_PLUGIN[jobs_info_prefix]"
-  result+="%j"
-  result+="$SHELL_PLUGIN[jobs_info_suffix]"
-  echo $result
+  if [ $(jobs | wc -l) -ne 0 ]; then
+    result+="$SHELL_PLUGIN[jobs_info_prefix]"
+    result+="%j"
+    result+="$SHELL_PLUGIN[jobs_info_suffix]"
+    echo $result
+  fi
 }
 
 function path_info() {
