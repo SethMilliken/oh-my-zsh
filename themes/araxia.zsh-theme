@@ -32,10 +32,7 @@ PROMPT=''
 PROMPT+='$(command_number)'
 PROMPT+='$(shell_depth)'
 PROMPT+='$(user_host_info)'
-PROMPT+='%{$bg[red]%}'
-PROMPT+='%{$fg[white]%}'
-PROMPT+=' $(rvm-prompt i g s) '
-PROMPT+='%{$reset_color%}'
+PROMPT+='$(rvm_info)'
 PROMPT+='$(jobs_info)'
 PROMPT+=' $(vcs_status_prompt) '
 PROMPT+='$(path_info)'
@@ -91,6 +88,25 @@ VCS_PLUGIN[rev_prefix]="%{$fg[green]%} "
 VCS_PLUGIN[rev_suffix]="%{$reset_color%}"
 
 # }}} vcs
+## Rvm Customization # {{{
+typeset -gA RVM_PLUGIN
+
+RVM_PLUGIN[prefix]="%{$bg[red]%}"
+RVM_PLUGIN[prefix]+="%{$fg[white]%}"
+RVM_PLUGIN[suffix]="%{$reset_color%}"
+
+function rvm_info() {
+  local result=''
+  local output=$(rvm-prompt i g s 2> /dev/null)
+  if [[ -n $output ]]; then
+    result+="$RVM_PLUGIN[prefix]"
+    result+=$output
+    result+="$RVM_PLUGIN[suffix]"
+  fi
+  echo $result
+}
+
+# }}} vi-mode
 ## vi-mode Customization # {{{
 MODE_INDICATOR="%{$fg_bold[red]%}"
 #MODE_INDICATOR="%{$fg_bold[red]%}❮%{$reset_color%}%{$fg[red]%}❮❮%{$reset_color%}" # fancier alternate for RPROMPT inclusion
