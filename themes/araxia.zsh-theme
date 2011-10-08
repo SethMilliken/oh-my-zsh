@@ -93,11 +93,13 @@ typeset -gA RVM_PLUGIN
 
 RVM_PLUGIN[prefix]="%{$bg[red]%}"
 RVM_PLUGIN[prefix]+="%{$fg[white]%}"
-RVM_PLUGIN[suffix]="%{$reset_color%}"
+RVM_PLUGIN[prefix]+=" "
+RVM_PLUGIN[suffix]=" "
+RVM_PLUGIN[suffix]+="%{$reset_color%}"
 
 function rvm_info() {
   local result=''
-  local output=$(rvm-prompt i g s 2> /dev/null)
+  local output=$(rvm-prompt i g 2> /dev/null)
   if [[ -n $output ]]; then
     result+="$RVM_PLUGIN[prefix]"
     result+=$output
