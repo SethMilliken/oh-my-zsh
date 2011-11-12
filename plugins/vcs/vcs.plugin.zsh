@@ -18,6 +18,9 @@
 # $(vcs_rev_short)     : abbreviated form of current revision
 # $(vcs_rev_long)      : more verbose current revision information
 #
+# vcs_toggle_details   : function to manually toggle detail display for when
+#                      : computing vcs info at each prompt is too expensive
+#
 # ------------------------------------------
 # FEATURE SUPPORT BY VCS
 # ------------------------------------------
@@ -244,6 +247,14 @@ function _vcs_prompt() {
 
 function _vcs_hide_details() {
     echo "${VCS_HIDE_DETAILS}$VCS_PLUGIN[suppress_details]"
+}
+
+function vcs_toggle_details() {
+    if [[ -n "$VCS_PLUGIN[suppress_details]" ]]; then
+        VCS_PLUGIN[suppress_details]=
+    else
+        VCS_PLUGIN[suppress_details]=true
+    fi
 }
 
 # Default status prompts; override by defining your own functions of the same
