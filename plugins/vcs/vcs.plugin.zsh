@@ -406,20 +406,20 @@ function _vcs_dirt_status_simple() {
 function _vcs_is_clean_git() {
   local untracked=''
   [[ -z $VCS_PLUGIN[untracked_is_dirty] ]] && untracked+="--untracked=no"
-  [[ -z $(git status --short --porcelain $untracked 2> /dev/null) ]] && true
+  [[ -z $(git status --short --porcelain $untracked &> /dev/null) ]] && true
 }
 
 function _vcs_is_clean_svn() {
   local untracked=''
   [[ -z $VCS_PLUGIN[untracked_is_dirty] ]] && untracked+="-q"
-  [[ -z $(svn status $untracked 2> /dev/null) ]] && true
+  [[ -z $(svn status $untracked &> /dev/null) ]] && true
 }
 
 
 function _vcs_is_clean_hg() {
   local untracked=''
   [[ -z $VCS_PLUGIN[untracked_is_dirty] ]] && untracked+="-q"
-  [[ -z $(hg status $untracked 2> /dev/null) ]] && true
+  [[ -z $(hg status $untracked &> /dev/null) ]] && true
 }
 
 function _vcs_dirt_status_full() {
