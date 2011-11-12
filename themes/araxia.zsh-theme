@@ -2,7 +2,7 @@
 #    FILE                  : araxia.zsh-theme
 #    DESCRIPTION           : oh-my-zsh theme file
 #    AUTHOR                : Seth Milliken <seth_github@araxia.net>
-#    VERSION               : 1.0
+#    VERSION               : 1.1
 #    PLUGINS               : vcs vi-mode shell
 #    TERMINAL CAPABILITIES : unicode 256color
 #    SCREENSHOT            :
@@ -11,7 +11,7 @@
 #                          : - demonstrates use of shell plugin to facilitate
 #                          :     easily themeable, more readable standard prompt
 #                          :     elements
-#                          : - demonstrates use of plugin configuration with 
+#                          : - demonstrates use of plugin configuration with
 #                          :     associate arrays
 #                          : - demonstrates entirely declarative configuration
 #                          :     (all code lives in plugins to promote reuse and
@@ -21,22 +21,36 @@
 #                          :      readable and elements easier to move around)
 #                          : - simple vi-mode indicator
 #                          :     (prompt character changes to red)
+#                          : - can toggle vi-mode off
 #                          : - includes indicator of exit status of previous command
 #                          : - includes indicator of shell-depth
 #                          : - includes indicator of command number (for ease of
 #                          :      using shell history functionality)
+#                          : - can toggle between single and multiline
 # -----------------------------------------------------------------------------
 
 ## Prompt # {{{
 PROMPT=''
+if [[ -n "$USE_MULTILINE_PROMPT" ]]; then
+PROMPT+=""
+else
 PROMPT+='$(command_number)'
+fi
 PROMPT+='$(shell_depth)'
 PROMPT+='$(user_host_info)'
 PROMPT+='$(rvm_info)'
 PROMPT+='$(jobs_info)'
 PROMPT+=' $(vcs_status_prompt) '
+if [[ -n "$USE_MULTILINE_PROMPT" ]]; then
+PROMPT+="
+"
+PROMPT+='$(command_number)'
+PROMPT+=" ⤷  "
+fi
 PROMPT+='$(path_info)'
+if [[ -n "$USE_VI_MODE" ]]; then
 PROMPT+='$(vi_mode_prompt_info)'
+fi
 PROMPT+='$(prompt_character)'
 
 RPROMPT=''
