@@ -203,7 +203,7 @@ VCS_DETECTION_ORDER=(svn git hg)
 # =====[ detection ]============================================================
 function vcs_is_git() {
   # this invocation handles ignored subdirectories of git work trees
-  [[ -n $(git ls-files --exclude-standard 2> /dev/null) ]]
+  [[ -n $(git rev-parse --show-toplevel 2> /dev/null) ]]
 }
 
 function vcs_is_hg() {
