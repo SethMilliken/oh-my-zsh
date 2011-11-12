@@ -32,6 +32,7 @@
 # vcs_dirt_age          | O   | O  | O   | X   |
 # vcs_rev_short         | O   | O  | O   | X   |
 # vcs_rev_long          | O   | O  | O   | X   |
+# vcs_remote            | O   | X  | X   | X   |
 #
 # O = implemented
 # X = unimplemented
@@ -150,6 +151,11 @@ VCS_PLUGIN[branch_prefix]="%{$fg[white]%}"
 # $VCS_PLUGIN[branch_suffix]
 VCS_PLUGIN[branch_suffix]="%{$reset_color%}"
 
+# $VCS_PLUGIN[remote_prefix]
+VCS_PLUGIN[remote_prefix]="%{$fg[white]%}"
+# $VCS_PLUGIN[remote_suffix]
+VCS_PLUGIN[remote_suffix]="%{$reset_color%}:"
+
 # $VCS_PLUGIN[rev_prefix]
 VCS_PLUGIN[rev_prefix]=
 # $VCS_PLUGIN[rev_suffix]
@@ -267,6 +273,7 @@ function _vcs_prompt_git() {
     result+="$(vcs_ahead_behind)"
     result+="$(vcs_dirt_status) "
     result+="$VCS_PLUGIN[git_vcs_symbol]"
+    result+="$(vcs_remote)"
     result+="$(vcs_branch)"
     echo $result
 }
@@ -296,7 +303,6 @@ function _vcs_prompt_hg() {
 # =====[ branch information ]===================================================
 
 function vcs_branch() {
-  local length=$1
   local value=''
   for vcs in $VCS_DETECTION_ORDER; do
     vcs_is_${vcs} && value+=$(_vcs_branch_${vcs}) && break
@@ -320,6 +326,32 @@ function _vcs_branch_hg() {
 function _vcs_branch_svn() {
   # Strip out '/trunk/'
   echo $(svn info | awk '/Root/{root=$3 "\/(trunk/)?"};/URL/{url=$2};END{gsub(root,"",url);print url}')
+}
+
+# =====[ remote information ]===================================================
+function vcs_remote() {
+  local value=''
+  for vcs in $VCS_DETECTION_ORDER; do
+    vcs_is_${vcs} && value+=$(_vcs_remote_${vcs}) && break
+  done
+  [[ -z $value ]] && return
+  local result=''
+  result+="$VCS_PLUGIN[remote_prefix]"
+  result+=$value
+  result+="$VCS_PLUGIN[remote_suffix]"
+  echo $result
+}
+
+function _vcs_remote_git() {
+    echo $(git config branch.$(_vcs_branch_git).remote 2> /dev/null) || return
+}
+
+function _vcs_remote_hg() {
+  return # unimplemented
+}
+
+function _vcs_remote_svn() {
+  return # unimplemented
 }
 
 # =====[ current revision ]=====================================================
