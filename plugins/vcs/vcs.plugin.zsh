@@ -198,6 +198,12 @@ VCS_PLUGIN[time_verbose]=
 # VCS_DETECTION_ORDER                                  : [hash] order in which cwd will be inspected for vcs type
 VCS_DETECTION_ORDER=(svn git hg)
 
+# VCS_HIDE_DETAILS                                     : [flag] "true" to avoid showing vcs details
+VCS_HIDE_DETAILS=
+#                                                      : can be used as a toggle for performance in directories
+#                                                      : where it is expensive to calculate vcs information
+#                                                      : e.g. sshfs mounts over slow connection; massive work trees
+
 # =====[ IMPLEMENTATION ]=======================================================
 
 # =====[ detection ]============================================================
@@ -227,9 +233,17 @@ function _vcs_prompt() {
     local vcs=$1
     local result=''
     result+="$VCS_PLUGIN[prompt_prefix]"
-    result+=$(_vcs_prompt_${vcs})
+    if [[ -n $(_vcs_hide_details) ]]; then
+        result+="$VCS_PLUGIN[git_vcs_symbol]"
+    else
+        result+=$(_vcs_prompt_${vcs})
+    fi
     result+="$VCS_PLUGIN[prompt_suffix]"
     echo $result
+}
+
+function _vcs_hide_details() {
+    echo "${VCS_HIDE_DETAILS}$VCS_PLUGIN[suppress_details]"
 }
 
 # Default status prompts; override by defining your own functions of the same
