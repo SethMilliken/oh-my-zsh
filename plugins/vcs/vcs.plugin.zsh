@@ -271,7 +271,7 @@ function _vcs_prompt_git() {
     result+="$(vcs_dirt_age)"
     result+="$VCS_PLUGIN[separator]"
     result+="$(vcs_ahead_behind)"
-    result+="$(vcs_dirt_status) "
+    result+="$(vcs_dirt_status)"
     result+="$VCS_PLUGIN[separator]"
     result+="$VCS_PLUGIN[git_vcs_symbol]"
     result+="$(vcs_remote)"
@@ -283,7 +283,7 @@ function _vcs_prompt_svn() {
     local result=''
     result+="$(vcs_dirt_age)"
     result+="$VCS_PLUGIN[separator]"
-    result+="$(vcs_dirt_status) "
+    result+="$(vcs_dirt_status)"
     result+="$VCS_PLUGIN[separator]"
     result+="$VCS_PLUGIN[svn_vcs_symbol]"
     result+="${$(vcs_branch)#trunk}" # show nothing if "trunk"
@@ -295,7 +295,7 @@ function _vcs_prompt_hg() {
     local result=''
     result+="$(vcs_dirt_age)"
     result+="$VCS_PLUGIN[separator]"
-    result+="$(vcs_dirt_status) "
+    result+="$(vcs_dirt_status)"
     result+="$VCS_PLUGIN[separator]"
     result+="$VCS_PLUGIN[hg_vcs_symbol]"
     result+="$(vcs_branch)"
