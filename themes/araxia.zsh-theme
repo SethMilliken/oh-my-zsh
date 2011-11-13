@@ -105,7 +105,7 @@ VCS_PLUGIN[rev_suffix]="%{$reset_color%}"
 ## Rvm Customization # {{{
 typeset -gA RVM_PLUGIN
 
-RVM_PLUGIN[prefix]="%{$bg[red]%}"
+RVM_PLUGIN[prefix]=" %{$bg[red]%}"
 RVM_PLUGIN[prefix]+="%{$fg[white]%}"
 RVM_PLUGIN[prefix]+=" "
 RVM_PLUGIN[suffix]=" "
