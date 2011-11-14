@@ -32,20 +32,21 @@
 ## Prompt # {{{
 PROMPT=''
 if [[ -n "$USE_MULTILINE_PROMPT" ]]; then
-PROMPT+=""
+PROMPT+='⎛⎛ '
 else
 PROMPT+='$(command_number)'
-fi
 PROMPT+='$(shell_depth)'
+fi
 PROMPT+='$(user_host_info)'
 PROMPT+='$(rvm_info)'
 PROMPT+='$(jobs_info)'
-PROMPT+=' $(vcs_status_prompt) '
+PROMPT+='$(vcs_status_prompt) '
 if [[ -n "$USE_MULTILINE_PROMPT" ]]; then
 PROMPT+="
 "
-PROMPT+='$(command_number)'
-PROMPT+=" ⤷  "
+PROMPT+='⎝⎝ $(command_number)'
+PROMPT+='$(shell_depth)'
+PROMPT+=" ⤷ "
 fi
 PROMPT+='$(path_info)'
 if [[ -n "$USE_VI_MODE" ]]; then
@@ -66,21 +67,42 @@ SHELL_PLUGIN[user_info_suffix]="%f"
 SHELL_PLUGIN[host_info_prefix]="%F{039}"
 SHELL_PLUGIN[host_info_suffix]="%f"
 
+if [[ -n "$USE_MULTILINE_PROMPT" ]]; then
+SHELL_PLUGIN[user_host_info_prefix]=" "
+SHELL_PLUGIN[user_host_info_suffix]=" ）"
+else
 SHELL_PLUGIN[user_host_info_prefix]="[ "
 SHELL_PLUGIN[user_host_info_suffix]=" ]"
+fi
 
-SHELL_PLUGIN[jobs_info_prefix]="%{$bg[green]%}%{$fg[white]%} "
+SHELL_PLUGIN[command_number_prefix]=""
+if [[ -n "$USE_MULTILINE_PROMPT" ]]; then
+SHELL_PLUGIN[command_number_prefix]+=" "
+fi
+SHELL_PLUGIN[command_number_prefix]+="%{$bg[white]%}%{$fg_bold[grey]%} "
+SHELL_PLUGIN[command_number_suffix]=" %{$reset_color%}"
+
+SHELL_PLUGIN[jobs_info_prefix]="%{$bg[green]%}%{$fg[grey]%} "
 SHELL_PLUGIN[jobs_info_suffix]=" %{$reset_color%}"
 
+if [[ -n "$USE_MULTILINE_PROMPT" ]]; then
+SHELL_PLUGIN[path_info_prefix]=" [ %F{178}"
+SHELL_PLUGIN[path_info_suffix]="%f ]"
+else
 SHELL_PLUGIN[path_info_prefix]="[ %F{178}"
 SHELL_PLUGIN[path_info_suffix]="%f ]"
+fi
 
 # }}} # shell
 ## VCS Plugin Customization # {{{
 
+VCS_PLUGIN[no_vcs_symbol]="☾☽"
+VCS_PLUGIN[separator]=" ⋮ "
+VCS_PLUGIN[ahead_behind_suffix]=$VCS_PLUGIN[separator]
+
 # Wrap VCS status
-VCS_PLUGIN[prompt_prefix]="("
-VCS_PLUGIN[prompt_suffix]=")"
+VCS_PLUGIN[prompt_prefix]="☾ "
+VCS_PLUGIN[prompt_suffix]=" ☽"
 VCS_PLUGIN[dirt_status_verbosity]="full"
 VCS_PLUGIN[untracked_is_dirty]=
 VCS_PLUGIN[include_dirty_counts]=true
@@ -105,7 +127,7 @@ VCS_PLUGIN[rev_suffix]="%{$reset_color%}"
 ## Rvm Customization # {{{
 typeset -gA RVM_PLUGIN
 
-RVM_PLUGIN[prefix]=" %{$bg[red]%}"
+RVM_PLUGIN[prefix]="%{$bg[red]%}"
 RVM_PLUGIN[prefix]+="%{$fg[white]%}"
 RVM_PLUGIN[prefix]+=" "
 RVM_PLUGIN[suffix]=" "

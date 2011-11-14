@@ -117,7 +117,7 @@ VCS_PLUGIN[deleted_symbol]+="%{$reset_color%}"
 
 # $VCS_PLUGIN[unmerged_symbol]                         : [string] show when there is at least one unmerged or conflicted file
 VCS_PLUGIN[unmerged_symbol]="%{$fg[blue]%}"
-VCS_PLUGIN[unmerged_symbol]+="═"
+VCS_PLUGIN[unmerged_symbol]+="⋙"
 VCS_PLUGIN[unmerged_symbol]+="%{$reset_color%}"
 
 # $VCS_PLUGIN[copied_symbol]                           : [string] show when there is at least one copied file
