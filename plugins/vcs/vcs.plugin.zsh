@@ -154,7 +154,9 @@ VCS_PLUGIN[branch_suffix]="%{$reset_color%}"
 # $VCS_PLUGIN[remote_prefix]
 VCS_PLUGIN[remote_prefix]="%{$fg[white]%}"
 # $VCS_PLUGIN[remote_suffix]
-VCS_PLUGIN[remote_suffix]="%{$reset_color%}:"
+VCS_PLUGIN[remote_suffix]="%{$reset_color%}"
+# $VCS_PLUGIN[remote_separator]
+VCS_PLUGIN[remote_separator]=":"
 
 # $VCS_PLUGIN[rev_prefix]
 VCS_PLUGIN[rev_prefix]=
@@ -342,11 +344,28 @@ function vcs_remote() {
   result+="$VCS_PLUGIN[remote_prefix]"
   result+=$value
   result+="$VCS_PLUGIN[remote_suffix]"
+  result+="$VCS_PLUGIN[remote_separator]"
   echo $result
 }
 
 function _vcs_remote_git() {
+    local result=''
+    local value=''
+    value+=$(_vcs_remote_github_user)
+    if [[ -n $value ]]; then
+        result+=$value
+        result+="$VCS_PLUGIN[remote_separator]"
+    fi
+    result+=$(_vcs_remote_git_raw)
+    echo $result
+}
+
+function _vcs_remote_git_raw() {
     echo $(git config branch.$(_vcs_branch_git).remote 2> /dev/null) || return
+}
+
+function _vcs_remote_github_user() {
+    echo $(git config remote.$(_vcs_remote_git_raw).url | sed -e 's/.*github.com:\(.*\)\/.*/\1/') || return
 }
 
 function _vcs_remote_hg() {
