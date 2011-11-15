@@ -109,7 +109,10 @@ function shell_depth() {
   local level=$SHLVL
   ((level--))
   if [[ -z $SHELL_PLUGIN[shell_level_includes_multiplexer] ]]; then
-      if [[ $STY != "" || $TMUX != "" ]]; then # ignore screen and tmux
+      if [[ -n ${STY}${TMUX} ]]; then # ignore screen and tmux
+        ((level--))
+      fi
+      if [[ -n ${TMUX}$(ps | grep reattach-to-user-namespace 2> /dev/null) ]]; then # ignore mac os x tmux hack
         ((level--))
       fi
   fi
