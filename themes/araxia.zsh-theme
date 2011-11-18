@@ -151,6 +151,9 @@ else
     SHELL_PLUGIN[host_info_prefix]="%F{039}"
     SHELL_PLUGIN[host_info_suffix]="%f"
 
+    SHELL_PLUGIN[user_info_prefix]="%b%F{208}"
+    SHELL_PLUGIN[user_info_suffix]="%f"
+
     SHELL_PLUGIN[command_number_prefix]=" "
     SHELL_PLUGIN[command_number_prefix]+="%{$bg[white]%}%{$fg_bold[grey]%} "
     SHELL_PLUGIN[command_number_suffix]=" %{$reset_color%}"
