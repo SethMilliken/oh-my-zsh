@@ -30,28 +30,8 @@
 #                          :   simplified prompts
 # -----------------------------------------------------------------------------
 
-## Rvm Customization # {{{
 typeset -gA RVM_PLUGIN
 
-# Defaults
-RVM_PLUGIN[prefix]="%{$bg[red]%}"
-RVM_PLUGIN[prefix]+="%{$fg[white]%}"
-RVM_PLUGIN[prefix]+=" "
-RVM_PLUGIN[suffix]=" "
-RVM_PLUGIN[suffix]+="%{$reset_color%}"
-
-function rvm_info() {
-  local result=''
-  local output=$(rvm-prompt i g 2> /dev/null)
-  if [[ -n $output ]]; then
-    result+="$RVM_PLUGIN[prefix]"
-    result+=$output
-    result+="$RVM_PLUGIN[suffix]"
-  fi
-  echo $result
-}
-
-# }}} rvm
 ## VCS Plugin Customization # {{{
 
 VCS_PLUGIN[no_vcs_symbol]="☾☽"
@@ -133,6 +113,8 @@ RPROMPT=''
 RPROMPT+='$(exit_status)'
 RPROMPT+='$(prompt_displayed_time)'
 
+RVM_PLUGIN[color]="%{$bg[red]%}%{$fg[white]%}"
+
 if [[ -n "$USE_SINGLELINE_PROMPT" ]]; then
     SHELL_PLUGIN[user_host_info_prefix]="[ "
     SHELL_PLUGIN[user_host_info_suffix]=" ]"
@@ -169,16 +151,17 @@ else
     PROMPT=$multi
 fi
 if [[ -n "$USE_SIMPLIFIED_PROMPT" ]]; then
+    RVM_PLUGIN[color]="%{$bg[white]%}%{$fg[black]%}"
     SHELL_PLUGIN[user_host_info_prefix]="[ "
     SHELL_PLUGIN[user_host_info_suffix]=" ]"
 
-    SHELL_PLUGIN[user_info_prefix]="%{$fg[red]%}"
-    SHELL_PLUGIN[user_info_suffix]="%{$reset_color%}"
+    SHELL_PLUGIN[user_info_prefix]=""
+    SHELL_PLUGIN[user_info_suffix]=""
 
-    SHELL_PLUGIN[host_info_prefix]="%{$fg[cyan]%}"
-    SHELL_PLUGIN[host_info_suffix]="%{$reset_color%}"
+    SHELL_PLUGIN[host_info_prefix]=""
+    SHELL_PLUGIN[host_info_suffix]=""
 
-    SHELL_PLUGIN[path_info_prefix]=" %{$fg[yellow]%}"
+    SHELL_PLUGIN[path_info_prefix]=" %{$fg[white]%}"
     SHELL_PLUGIN[path_info_suffix]="%{$reset_color%} "
 
     RPROMPT=''
@@ -187,5 +170,24 @@ if [[ -n "$USE_SIMPLIFIED_PROMPT" ]]; then
 fi
 
 # }}} prompt
+## Rvm Customization # {{{
+# Defaults
+RVM_PLUGIN[prefix]="$RVM_PLUGIN[color]"
+RVM_PLUGIN[prefix]+=" "
+RVM_PLUGIN[suffix]=" "
+RVM_PLUGIN[suffix]+="%{$reset_color%}"
+
+function rvm_info() {
+  local result=''
+  local output=$(rvm-prompt i g 2> /dev/null)
+  if [[ -n $output ]]; then
+    result+="$RVM_PLUGIN[prefix]"
+    result+=$output
+    result+="$RVM_PLUGIN[suffix]"
+  fi
+  echo $result
+}
+
+# }}} rvm
 
 # vim: ft=zsh:fdm=marker
