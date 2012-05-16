@@ -152,6 +152,8 @@ VCS_PLUGIN[no_vcs_symbol]="☾☽"
 VCS_PLUGIN[branch_prefix]="%{$fg[white]%}"
 # $VCS_PLUGIN[branch_suffix]
 VCS_PLUGIN[branch_suffix]="%{$reset_color%}"
+# $VCS_PLUGIN[branch_separator]
+VCS_PLUGIN[branch_separator]="/"
 
 # $VCS_PLUGIN[remote_prefix]
 VCS_PLUGIN[remote_prefix]="%{$fg[white]%}"
@@ -393,23 +395,28 @@ function vcs_remote() {
   result+="$VCS_PLUGIN[remote_prefix]"
   result+=$value
   result+="$VCS_PLUGIN[remote_suffix]"
-  result+="$VCS_PLUGIN[remote_separator]"
+  result+="$VCS_PLUGIN[branch_separator]"
   echo $result
 }
 
 function _vcs_remote_git() {
     local result=''
     local value=''
-    value+=$(_vcs_remote_github_user)
+    value=$(_vcs_remote_git_raw)
+    if [[ -n $value ]]; then
+        result+="["
+        result+=$value
+        result+="] "
+    fi
+    value=$(_vcs_remote_github_user)
     if [[ -n $value ]]; then
         result+=$value
         result+="$VCS_PLUGIN[remote_separator]"
     fi
-    result+=$(_vcs_remote_git_raw)
     value=$(_vcs_remote_git_repo_name)
     if [[ "$(_vcs_branch_git)" == "$value" ]]; then
+        result+="*"
     else
-        result+="$VCS_PLUGIN[remote_separator]"
         result+=$value
     fi
     echo $result
@@ -424,7 +431,7 @@ function _vcs_remote_git_repo_name() {
 }
 
 function _vcs_remote_github_user() {
-echo $(git config remote.$(_vcs_remote_git_raw).url | sed -e 's/.*github.com:\([^\/]*\)\/.*/\1/') | sed -e 's/[^\/]*\/\/\([^\/]*\)\/.*/\1/' || return
+    echo $(git config remote.$(_vcs_remote_git_raw).url | sed -e 's/.*github.com[\/:]\([^\/]*\)\/.*/\1/') | sed -e 's/[^\/]*\/\/\([^\/]*\)\/.*/\1/' || return
 }
 
 function _vcs_remote_hg() {
