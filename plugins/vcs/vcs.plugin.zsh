@@ -64,12 +64,13 @@
 typeset -gA VCS_PLUGIN
 
 # $VCS_PLUGIN[separator]                               : [string] separates elements in the vcs prompt
-VCS_PLUGIN[separator]=" | "
+VCS_PLUGIN[separator]=" ⋮ "
 
 # $VCS_PLUGIN[prompt_prefix]                           : [string] precedes contents of the vcs prompt
-VCS_PLUGIN[prompt_prefix]="("
+VCS_PLUGIN[prompt_prefix]="☾ "
+
 # $$VCS_PLUGIN[prompt_suffix]                          : [string] proceeds contents of the vcs prompt
-VCS_PLUGIN[prompt_suffix]=")"
+VCS_PLUGIN[prompt_suffix]=" ☽"
 
 # $VCS_PLUGIN[dirt_status_verbosity]                   : [string] show symbols each type of dirty file
 #                                                      : or a single dirty or clean symbol
@@ -144,7 +145,8 @@ VCS_PLUGIN[svn_vcs_symbol]="Ⓢ "
 #VCS_PLUGIN[svn_vcs_symbol]="⚡ "
 
 # $VCS_PLUGIN[no_vcs_symbol]                           : [string] show when cwd is not associated with a vcs
-VCS_PLUGIN[no_vcs_symbol]="◯ "
+#VCS_PLUGIN[no_vcs_symbol]="◯ "
+VCS_PLUGIN[no_vcs_symbol]="☾☽"
 
 # $VCS_PLUGIN[branch_prefix]
 VCS_PLUGIN[branch_prefix]="%{$fg[white]%}"
@@ -214,6 +216,53 @@ VCS_HIDE_DETAILS=
 #                                                      : can be used as a toggle for performance in directories
 #                                                      : where it is expensive to calculate vcs information
 #                                                      : e.g. sshfs mounts over slow connection; massive work trees
+if [[ -n "$USE_SIMPLIFIED_PROMPT" ]]; then
+VCS_PLUGIN[separator]=" | "
+VCS_PLUGIN[prompt_prefix]="("
+VCS_PLUGIN[prompt_suffix]=")"
+VCS_PLUGIN[is_clean_symbol]="%{$fg[green]%}"
+VCS_PLUGIN[is_clean_symbol]+="v"
+VCS_PLUGIN[is_clean_symbol]+="%{$reset_color%}"
+VCS_PLUGIN[is_dirty_symbol]="%{$fg[red]%}"
+VCS_PLUGIN[is_dirty_symbol]+="x"
+VCS_PLUGIN[is_dirty_symbol]+="%{$reset_color%}"
+VCS_PLUGIN[untracked_symbol]="%{$fg_bold[white]%}"
+VCS_PLUGIN[untracked_symbol]+="*"
+VCS_PLUGIN[untracked_symbol]+="%{$reset_color%}"
+VCS_PLUGIN[added_symbol]="%{$fg[green]%}"
+VCS_PLUGIN[added_symbol]+="+"
+VCS_PLUGIN[added_symbol]+="%{$reset_color%}"
+VCS_PLUGIN[modified_symbol]="%{$fg_bold[green]%}"
+VCS_PLUGIN[modified_symbol]+=">"
+VCS_PLUGIN[modified_symbol]+="%{$reset_color%}"
+VCS_PLUGIN[renamed_symbol]="%{$fg[yellow]%}"
+VCS_PLUGIN[renamed_symbol]+="->"
+VCS_PLUGIN[renamed_symbol]+="%{$reset_color%}"
+VCS_PLUGIN[deleted_symbol]="%{$fg[red]%}"
+VCS_PLUGIN[deleted_symbol]+="x"
+VCS_PLUGIN[deleted_symbol]+="%{$reset_color%}"
+VCS_PLUGIN[unmerged_symbol]="%{$fg[blue]%}"
+VCS_PLUGIN[unmerged_symbol]+=">>"
+VCS_PLUGIN[unmerged_symbol]+="%{$reset_color%}"
+VCS_PLUGIN[copied_symbol]="%{fg_bold[blue]%}"
+VCS_PLUGIN[copied_symbol]+="c"
+VCS_PLUGIN[copied_symbol]+="%{$reset_color%}"
+VCS_PLUGIN[git_vcs_symbol]="%F{154}"
+VCS_PLUGIN[git_vcs_symbol]+="(G)"
+VCS_PLUGIN[git_vcs_symbol]+="%f"
+VCS_PLUGIN[hg_vcs_symbol]="%{$fg_bold[red]%}"
+VCS_PLUGIN[hg_vcs_symbol]+="(M)"
+VCS_PLUGIN[hg_vcs_symbol]+="%{$reset_color%} "
+VCS_PLUGIN[svn_vcs_symbol]="(S)"
+VCS_PLUGIN[no_vcs_symbol]="()"
+VCS_PLUGIN[ahead_by_symbol]="%{$fg_bold[blue]%}"
+VCS_PLUGIN[ahead_by_symbol]+="^"
+VCS_PLUGIN[ahead_by_symbol]+="%{$reset_color%}"
+VCS_PLUGIN[behind_by_symbol]="%{$fg_bold[red]%}"
+VCS_PLUGIN[behind_by_symbol]+="v"
+VCS_PLUGIN[behind_by_symbol]+="%{$reset_color%}"
+VCS_PLUGIN[ahead_behind_suffix]=$VCS_PLUGIN[separator]
+fi
 
 # =====[ IMPLEMENTATION ]=======================================================
 

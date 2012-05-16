@@ -34,28 +34,12 @@ typeset -gA RVM_PLUGIN
 
 ## VCS Plugin Customization # {{{
 
-VCS_PLUGIN[no_vcs_symbol]="☾☽"
-VCS_PLUGIN[separator]=" ⋮ "
-VCS_PLUGIN[ahead_behind_suffix]=$VCS_PLUGIN[separator]
-
-# Wrap VCS status
-VCS_PLUGIN[prompt_prefix]="☾ "
-VCS_PLUGIN[prompt_suffix]=" ☽"
-VCS_PLUGIN[dirt_status_verbosity]="full"
-VCS_PLUGIN[untracked_is_dirty]=
-VCS_PLUGIN[include_dirty_counts]=true
-
+if [[ -z "$USE_SIMPLIFIED_PROMPT" ]]; then
 # Change default modified character to `▹`: mnemonic "delta"
-#VCS_PLUGIN[time_verbose]=true
 VCS_PLUGIN[modified_symbol]="%{$fg_bold[green]%}"
 VCS_PLUGIN[modified_symbol]+="▹"
 VCS_PLUGIN[modified_symbol]+="%{$reset_color%}"
-
-# Colors vary depending on time lapsed since last commit
-VCS_PLUGIN[time_since_commit_neutral]="%{$fg[white]%}"
-VCS_PLUGIN[time_since_commit_short]="%{$fg[green]%}"
-VCS_PLUGIN[time_short_commit_medium]="%{$fg[yellow]%}"
-VCS_PLUGIN[time_since_commit_long]="%{$fg[red]%}"
+fi
 
 # Mercurial tweak
 VCS_PLUGIN[rev_prefix]="%{$fg[green]%} "
@@ -63,9 +47,11 @@ VCS_PLUGIN[rev_suffix]="%{$reset_color%}"
 
 # }}} vcs
 ## vi-mode Customization # {{{
+if [[ -z "$USE_SIMPLIFIED_PROMPT" ]]; then
+MODE_INDICATOR="%{$fg_bold[red]%}❮%{$reset_color%}%{$fg[red]%}❮❮%{$reset_color%}" # fancier alternate for RPROMPT inclusion
+else
 MODE_INDICATOR="%{$fg_bold[red]%}"
-#MODE_INDICATOR="%{$fg_bold[red]%}❮%{$reset_color%}%{$fg[red]%}❮❮%{$reset_color%}" # fancier alternate for RPROMPT inclusion
-
+fi
 # }}} vi-mode
 ## Prompt # {{{
 
