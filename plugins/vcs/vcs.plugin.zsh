@@ -329,8 +329,8 @@ function _vcs_branch_hg() {
 }
 
 function _vcs_branch_svn() {
-  # Strip out '/trunk/'
-  echo $(svn info | awk '/Root/{root=$3 "\/(trunk/)?"};/URL/{url=$2};END{gsub(root,"",url);print url}')
+  # Strip out '/trunk/' and simplify url
+  echo $(svn info | awk '/Root/{root=$3 "\/(trunk/)?"};/URL/{url=$2};END{gsub(root,"",url);print url}' | sed -e 's/[^\/]*\/\/\([^\/]*\)\/.*\/\(.*\)/\1:\2/')
 }
 
 # =====[ remote information ]===================================================
@@ -357,6 +357,12 @@ function _vcs_remote_git() {
         result+="$VCS_PLUGIN[remote_separator]"
     fi
     result+=$(_vcs_remote_git_raw)
+    value=$(_vcs_remote_git_repo_name)
+    if [[ "$(_vcs_branch_git)" == "$value" ]]; then
+    else
+        result+="$VCS_PLUGIN[remote_separator]"
+        result+=$value
+    fi
     echo $result
 }
 
@@ -364,8 +370,12 @@ function _vcs_remote_git_raw() {
     echo $(git config branch.$(_vcs_branch_git).remote 2> /dev/null) || return
 }
 
+function _vcs_remote_git_repo_name() {
+    echo $(git config remote.$(_vcs_remote_git_raw).url 2> /dev/null | awk -F/ '{print $NF}' | sed -e 's/\.git//' ) || return
+}
+
 function _vcs_remote_github_user() {
-    echo $(git config remote.$(_vcs_remote_git_raw).url | sed -e 's/.*github.com:\(.*\)\/.*/\1/') || return
+echo $(git config remote.$(_vcs_remote_git_raw).url | sed -e 's/.*github.com:\([^\/]*\)\/.*/\1/') | sed -e 's/[^\/]*\/\/\([^\/]*\)\/.*/\1/' || return
 }
 
 function _vcs_remote_hg() {
@@ -635,7 +645,7 @@ function _vcs_dirt_age_hg() {
 function _vcs_dirt_age_svn() {
   local changed_date="$(svn info | awk -F'e: ' '/Changed Date:/{gsub(" \\(.*", "", $2); print $2}')"
   _vcs_is_clean_svn && local is_dirty=false
-  echo $(_vcs_dirt_age_calculate $(date -j -f "%Y-%m-%d %T %z" "${changed_date}" "+%s") ${is_dirty:-true})
+  #echo $(_vcs_dirt_age_calculate $(date -j +"%Y-%m-%d %T %z" "${changed_date}" "+%s") ${is_dirty:-true})
 }
 
 function _vcs_dirt_age_git() {
