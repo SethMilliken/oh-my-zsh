@@ -408,6 +408,11 @@ function _vcs_remote_git() {
         result+=$value
         result+="] "
     fi
+    value=$(_vcs_remote_is_local)
+    if [[ -n $value ]]; then
+        result+=$value
+        result+="$VCS_PLUGIN[remote_separator]"
+    fi
     value=$(_vcs_remote_github_user)
     if [[ -n $value ]]; then
         result+=$value
@@ -426,12 +431,21 @@ function _vcs_remote_git_raw() {
     echo $(git config branch.$(_vcs_branch_git).remote 2> /dev/null) || return
 }
 
+function _vcs_remote_is_local() {
+    if [[ -d "$(git config remote.$(_vcs_remote_git_raw).url 2> /dev/null)" ]]; then
+        echo $(_vcs_remote_git_repo_name)
+    fi
+}
+
 function _vcs_remote_git_repo_name() {
     echo $(git config remote.$(_vcs_remote_git_raw).url 2> /dev/null | awk -F/ '{print $NF}' | sed -e 's/\.git//' ) || return
 }
 
 function _vcs_remote_github_user() {
-    echo $(git config remote.$(_vcs_remote_git_raw).url | sed -e 's/.*github.com[\/:]\([^\/]*\)\/.*/\1/') | sed -e 's/[^\/]*\/\/\([^\/]*\)\/.*/\1/' || return
+    git_remote_url=$(git config remote.$(_vcs_remote_git_raw).url | grep 'github.com')
+    if [[ -e $git_remote_url ]]; then
+        echo $git_remote_url | sed -e 's/.*github.com[\/:]\([^\/]*\)\/.*/\2/' | sed -e 's/[^\/]*\/\/\([^\/]*\)\/.*/\1/' || return
+    fi
 }
 
 function _vcs_remote_hg() {
