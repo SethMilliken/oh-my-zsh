@@ -31,6 +31,7 @@
 # -----------------------------------------------------------------------------
 
 typeset -gA RVM_PLUGIN
+typeset -gA VENV_PLUGIN
 
 ## VCS Plugin Customization # {{{
 
@@ -59,6 +60,7 @@ fi
 multi=''
 multi+='⎛⎛ '
 multi+='$(user_host_info)'
+multi+='$(venv_info)'
 multi+='$(rvm_info)'
 multi+='$(jobs_info)'
 multi+='$(vcs_status_prompt) '
@@ -100,6 +102,7 @@ RPROMPT+='$(exit_status)'
 RPROMPT+='$(prompt_displayed_time)'
 
 RVM_PLUGIN[color]="%{$bg[red]%}%{$fg[white]%}"
+VENV_PLUGIN[color]="%{$bg[blue]%}%{$fg[white]%}"
 
 if [[ -n "$USE_SINGLELINE_PROMPT" ]]; then
     SHELL_PLUGIN[user_host_info_prefix]="[ "
@@ -175,5 +178,24 @@ function rvm_info() {
 }
 
 # }}} rvm
+## Python venv Customization # {{{
+# Defaults
+VENV_PLUGIN[prefix]="$VENV_PLUGIN[color]"
+VENV_PLUGIN[prefix]+=" "
+VENV_PLUGIN[suffix]=" "
+VENV_PLUGIN[suffix]+="%{$reset_color%}"
+
+function venv_info() {
+  local result=''
+  local output=$VIRTUAL_ENV
+  if [[ -n $output ]]; then
+    result+="$VENV_PLUGIN[prefix]"
+    result+=$(basename $output)
+    result+="$VENV_PLUGIN[suffix]"
+  fi
+  echo $result
+}
+
+# }}} venv
 
 # vim: ft=zsh:fdm=marker
