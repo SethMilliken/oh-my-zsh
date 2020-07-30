@@ -101,6 +101,11 @@ VCS_PLUGIN[added_symbol]="%{$fg[green]%}"
 VCS_PLUGIN[added_symbol]+="✚"
 VCS_PLUGIN[added_symbol]+="%{$reset_color%}"
 
+# $VCS_PLUGIN[staged_symbol]                            : [string] show when there is at least one staged change
+VCS_PLUGIN[staged_symbol]="%{$fg[yellow]%}"
+VCS_PLUGIN[staged_symbol]+="≈"
+VCS_PLUGIN[staged_symbol]+="%{$reset_color%}"
+
 # $VCS_PLUGIN[modified_symbol]                         : [string] show when there is at least one modified file
 VCS_PLUGIN[modified_symbol]="%{$fg_bold[green]%}"
 VCS_PLUGIN[modified_symbol]+="✹"
@@ -234,8 +239,11 @@ VCS_PLUGIN[untracked_symbol]+="%{$reset_color%}"
 VCS_PLUGIN[added_symbol]="%{$fg[green]%}"
 VCS_PLUGIN[added_symbol]+="+"
 VCS_PLUGIN[added_symbol]+="%{$reset_color%}"
+VCS_PLUGIN[staged_symbol]="%{$fg[yellow]%}"
+VCS_PLUGIN[staged_symbol]+="="
+VCS_PLUGIN[staged_symbol]+="%{$reset_color%}"
 VCS_PLUGIN[modified_symbol]="%{$fg_bold[green]%}"
-VCS_PLUGIN[modified_symbol]+=">"
+VCS_PLUGIN[modified_symbol]+="^"
 VCS_PLUGIN[modified_symbol]+="%{$reset_color%}"
 VCS_PLUGIN[renamed_symbol]="%{$fg[yellow]%}"
 VCS_PLUGIN[renamed_symbol]+="->"
@@ -587,21 +595,36 @@ function _vcs_dirt_status_full() {
 }
 
 function _vcs_dirt_status_git() {
+    # Output shows: staged-status unstaged-status space filename e.g.
+    #
+    # M  file-with-staged-changes
+    #  M file-with-unstaged-changes
+    # MM file-with-staged-and-unstaged-changes
+    # RM file-original-name -> file-new-name-with-unstaged-changed
+    #  D file-to-delete
+    # D  file-staged-for-delete
+    # A  file-staged-to-add
+    #
+    # also count added, deleted, renamed among staged files
+    # also count added and deleted among modified files
+    # never count exclusively staged changes among modified files
     git status --porcelain 2> /dev/null | awk "
 
-    /^\?\? /     { untracked++ ; total++ };
-    /^[AM]  /    { added++     ; total++ };
-    /^[A ][MT] / { modified++  ; total++ };
-    /^R  /       { renamed++   ; total++ };
-    /^[A ]D /    { deleted++   ; total++ };
-    /^UU /       { unmerged++  ; total++ };
-    /^C  /       { copied++    ; total++ };
+    /^\?\? /         { untracked++ ; total++ };
+    /^A  /           { added++     ; total++ };
+    /^[ADMR ][ADM] / { modified++  ; total++ };
+    /^[ADMR][ADM ] / { staged++    ; total++ };
+    /^R[M ] /        { renamed++   ; total++ };
+    /^[D ][D ] /     { deleted++   ; total++ };
+    /^UU /           { unmerged++  ; total++ };
+    /^C[M ] /        { copied++    ; total++ };
 
     END {
         if (total+0 == 0) { printf(\"%s\", \"$VCS_PLUGIN[is_clean_symbol]\"); exit; }
 
         count[\"untracked\"] = untracked+0 ; symbol[\"untracked\"] = \"$VCS_PLUGIN[untracked_symbol]\";
         count[\"added\"]     = added+0     ; symbol[\"added\"]     = \"$VCS_PLUGIN[added_symbol]\"    ;
+        count[\"staged\"]    = staged+0    ; symbol[\"staged\"]    = \"$VCS_PLUGIN[staged_symbol]\"    ;
         count[\"modified\"]  = modified+0  ; symbol[\"modified\"]  = \"$VCS_PLUGIN[modified_symbol]\" ;
         count[\"renamed\"]   = renamed+0   ; symbol[\"renamed\"]   = \"$VCS_PLUGIN[renamed_symbol]\"  ;
         count[\"deleted\"]   = deleted+0   ; symbol[\"deleted\"]   = \"$VCS_PLUGIN[deleted_symbol]\"  ;
