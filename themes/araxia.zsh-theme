@@ -51,7 +51,7 @@ VCS_PLUGIN[rev_suffix]="%{$reset_color%}"
 if [[ -z "$USE_SIMPLIFIED_PROMPT" ]]; then
 MODE_INDICATOR="%{$fg_bold[red]%}❮%{$reset_color%}%{$fg[red]%}❮❮%{$reset_color%}" # fancier alternate for RPROMPT inclusion
 else
-MODE_INDICATOR="%{$fg_bold[red]%}"
+MODE_INDICATOR="%{$bg[white]%}%{$fg_bold[red]%} NORMAL%{$reset_color%}"
 fi
 # }}} vi-mode
 ## Prompt # {{{
@@ -93,8 +93,15 @@ single+='$(prompt_character)'
 simple=''
 simple+='$(user_host_info)'
 simple+='$(rvm_info)'
+simple+='$(jobs_info)'
 simple+='$(path_info)'
 simple+='$(vcs_status_prompt) '
+simple+="
+"
+if [[ -n "$USE_VI_MODE" ]]; then
+simple+='$(vi_mode_prompt_info)'
+fi
+simple+='$(command_number)'
 simple+='$(prompt_character)'
 
 RPROMPT=''
@@ -116,6 +123,9 @@ if [[ -n "$USE_SINGLELINE_PROMPT" ]]; then
 
     SHELL_PLUGIN[path_info_prefix]="[ %F{178}"
     SHELL_PLUGIN[path_info_suffix]="%f ]"
+
+    SHELL_PLUGIN[jobs_info_prefix]="%{$bg[green]%}%{$fg[black]%} "
+    SHELL_PLUGIN[jobs_info_suffix]=" %{$reset_color%}"
 
     PROMPT=$single
 else
@@ -139,7 +149,7 @@ else
     SHELL_PLUGIN[user_host_info_suffix]=" ）"
     PROMPT=$multi
 fi
-if [[ -n "$USE_SIMPLIFIED_PROMPT" ]]; then
+if [[ -n "$USE_DECOLORIZED_PROMPT" ]]; then
     RVM_PLUGIN[color]="%{$bg[white]%}%{$fg[black]%}"
     SHELL_PLUGIN[user_host_info_prefix]="[ "
     SHELL_PLUGIN[user_host_info_suffix]=" ]"
@@ -154,6 +164,8 @@ if [[ -n "$USE_SIMPLIFIED_PROMPT" ]]; then
     SHELL_PLUGIN[path_info_suffix]="%{$reset_color%} "
 
     RPROMPT=''
+fi
+if [[ -n "$USE_SIMPLIFIED_PROMPT" ]]; then
 
     PROMPT=$simple
 fi
